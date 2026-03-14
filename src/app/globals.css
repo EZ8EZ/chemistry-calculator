@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 20% 8%;
+    --foreground: 210 20% 92%;
+    --card: 224 18% 11%;
+    --card-foreground: 210 20% 92%;
+    --popover: 224 18% 11%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 217 19% 17%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 217 19% 17%;
+    --muted-foreground: 215 16% 57%;
+    --accent: 217 19% 17%;
+    --accent-foreground: 210 20% 92%;
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 15% 20%;
+    --input: 217 15% 20%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* 3D viewer container */
+.mol-viewer-container canvas {
+  border-radius: var(--radius);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Element button styles */
+.element-btn {
+  @apply relative flex flex-col items-center justify-center rounded-md border border-border
+    px-2 py-1.5 text-xs font-medium transition-all duration-150
+    hover:border-primary/50 hover:bg-accent
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+    active:scale-95;
+}
+
+.element-btn.active {
+  @apply border-primary bg-primary/10 text-primary;
+}
+
+/* Panel transitions */
+.panel-enter {
+  animation: panel-slide 0.2s ease-out;
+}
+
+/* Atom highlight */
+.atom-highlight {
+  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.5));
+}
+
+/* Chemistry notation */
+.chem-formula {
+  font-variant-numeric: tabular-nums;
+}
+
+.chem-formula sub {
+  font-size: 0.75em;
+  vertical-align: sub;
+}
+
+.chem-formula sup {
+  font-size: 0.7em;
+  vertical-align: super;
+}
