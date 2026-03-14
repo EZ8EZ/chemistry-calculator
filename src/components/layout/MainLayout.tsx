@@ -11,6 +11,8 @@ import { AtomInspector } from "@/components/chem/AtomInspector";
 import { CandidatePanel } from "@/components/chem/CandidatePanel";
 import { ExportPanel } from "@/components/chem/ExportPanel";
 import { ActionHistory } from "@/components/chem/ActionHistory";
+import { MoleculeLibrary } from "@/components/chem/MoleculeLibrary";
+import { SmartSuggestions } from "@/components/chem/SmartSuggestions";
 import { cn } from "@/components/ui/button";
 
 export function MainLayout() {
@@ -26,6 +28,8 @@ export function MainLayout() {
     clearAll,
     molecule,
     userMode,
+    toggleLibrary,
+    showLibrary,
   } = useValenceStore();
 
   // Keyboard shortcuts
@@ -97,9 +101,15 @@ export function MainLayout() {
           setSelectedElement("P");
           setActiveTool("add-atom");
           break;
+        case "l":
+          toggleLibrary();
+          break;
+        case "escape":
+          if (showLibrary) toggleLibrary();
+          break;
       }
     },
-    [undo, redo, setActiveTool, setSelectedElement]
+    [undo, redo, setActiveTool, setSelectedElement, toggleLibrary, showLibrary]
   );
 
   useEffect(() => {
@@ -110,6 +120,7 @@ export function MainLayout() {
   return (
     <div className={cn("h-screen flex flex-col", darkMode && "dark")}>
       <Header />
+      <MoleculeLibrary />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Rail */}
@@ -122,8 +133,10 @@ export function MainLayout() {
           {/* 3D/2D Viewer */}
           <div className="flex-1 relative flex">
             {/* 2D View (primary interactive surface) */}
-            <div className="flex-1 bg-background p-2">
-              <div className="w-full h-full rounded-lg border border-border bg-card relative overflow-hidden">
+            <div className="flex-1 bg-background p-2 flex flex-col">
+              {/* Smart suggestions for beginners */}
+              <SmartSuggestions />
+              <div className="flex-1 rounded-lg border border-border bg-card relative overflow-hidden">
                 <MoleculeViewer2D className="w-full h-full" />
                 {/* View mode label */}
                 <div className="absolute top-2 left-2">

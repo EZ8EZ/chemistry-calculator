@@ -197,85 +197,12 @@ export function buildIdentity(
   };
 }
 
-// ─── Simple Name Lookup ─────────────────────────────────────
+// ─── Name Lookup (uses comprehensive database) ─────────────
 
-interface NameMatch {
-  name: string;
-  confidence: "high" | "medium" | "low";
-}
+import { lookupMoleculeName } from "../identifiers/names";
 
-const COMMON_MOLECULES: Record<string, string> = {
-  "C": "Methane",
-  "CC": "Ethane",
-  "CCC": "Propane",
-  "CCCC": "Butane",
-  "CCCCC": "Pentane",
-  "CCCCCC": "Hexane",
-  "C=C": "Ethylene",
-  "C=CC": "Propylene",
-  "C#C": "Acetylene",
-  "C=O": "Formaldehyde",
-  "CC=O": "Acetaldehyde",
-  "CC(C)=O": "Acetone",
-  "CCC=O": "Propanal",
-  "CC(=O)O": "Acetic acid",
-  "C(=O)O": "Formic acid",
-  "O": "Water",
-  "CO": "Methanol",
-  "CCO": "Ethanol",
-  "CCCO": "1-Propanol",
-  "CC(C)O": "2-Propanol",
-  "N": "Ammonia",
-  "CN": "Methylamine",
-  "CCN": "Ethylamine",
-  "C(=O)N": "Formamide",
-  "CC(=O)N": "Acetamide",
-  "O=C=O": "Carbon dioxide",
-  "C#N": "Hydrogen cyanide",
-  "CC#N": "Acetonitrile",
-  "CS": "Methanethiol",
-  "CCl": "Chloromethane",
-  "CCl(Cl)Cl": "Chloroform",
-  "ClC(Cl)(Cl)Cl": "Carbon tetrachloride",
-  "c1ccccc1": "Benzene",
-  "Cc1ccccc1": "Toluene",
-  "c1ccncc1": "Pyridine",
-  "c1cc[nH]c1": "Pyrrole",
-  "c1ccoc1": "Furan",
-  "c1ccsc1": "Thiophene",
-  "c1c[nH]cn1": "Imidazole",
-  "C1CCCCC1": "Cyclohexane",
-  "C1CCCC1": "Cyclopentane",
-  "C1CCC1": "Cyclobutane",
-  "C1CC1": "Cyclopropane",
-  "OO": "Hydrogen peroxide",
-  "NN": "Hydrazine",
-  "[O-][N+](=O)c1ccccc1": "Nitrobenzene",
-  "c1ccc(O)cc1": "Phenol",
-  "c1ccc(N)cc1": "Aniline",
-  "c1ccc(C=O)cc1": "Benzaldehyde",
-  "c1ccc(C(=O)O)cc1": "Benzoic acid",
-  "CC(=O)Oc1ccccc1": "Phenyl acetate",
-};
-
-function lookupCommonName(smiles: string): NameMatch | null {
-  if (!smiles) return null;
-
-  // Direct match
-  if (COMMON_MOLECULES[smiles]) {
-    return { name: COMMON_MOLECULES[smiles], confidence: "high" };
-  }
-
-  // Try some normalization (very basic)
-  const normalized = smiles.replace(/\(/g, "").replace(/\)/g, "");
-  for (const [key, name] of Object.entries(COMMON_MOLECULES)) {
-    const keyNorm = key.replace(/\(/g, "").replace(/\)/g, "");
-    if (normalized === keyNorm) {
-      return { name, confidence: "medium" };
-    }
-  }
-
-  return null;
+function lookupCommonName(smiles: string): { name: string; confidence: "high" | "medium" | "low" } | null {
+  return lookupMoleculeName(smiles);
 }
 
 // ─── Confidence Badge ───────────────────────────────────────

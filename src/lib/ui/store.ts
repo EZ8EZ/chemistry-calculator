@@ -21,6 +21,7 @@ import {
 import {
   analyzeAmbiguity, buildIdentity, detectAttachmentAmbiguity,
 } from "../../lib/candidates/ambiguity";
+import { parseSMILES } from "../chem/smilesParser";
 
 // ─── Store Types ────────────────────────────────────────────
 
@@ -57,6 +58,9 @@ interface ValenceState {
   showBondOrders: boolean;
   darkMode: boolean;
 
+  // Library
+  showLibrary: boolean;
+
   // Panels
   showRightPanel: boolean;
   showBottomDrawer: boolean;
@@ -82,6 +86,10 @@ interface ValenceState {
   closeRingInMolecule: (atomId1: string, atomId2: string, order?: BondOrder) => void;
   clearAll: () => void;
   selectCandidate: (candidateId: string) => void;
+  loadFromSMILES: (smiles: string, name?: string) => void;
+
+  // Library
+  toggleLibrary: () => void;
 
   // History actions
   undo: () => void;
@@ -175,10 +183,11 @@ export const useValenceStore = create<ValenceState>((set, get) => {
     showAtomLabels: true,
     showBondOrders: true,
     darkMode: true,
+    showLibrary: false,
     showRightPanel: true,
     showBottomDrawer: false,
     showExpertDiagnostics: false,
-    lastMessage: "Ready. Add an element to begin.",
+    lastMessage: "Ready. Pick a molecule from the library or add an element to begin.",
     lastWarnings: [],
 
     // ─── Molecule Operations ──────────────────────────────
@@ -301,6 +310,44 @@ export const useValenceStore = create<ValenceState>((set, get) => {
       });
     },
 
+    loadFromSMILES: (smiles, name) => {
+      const state = get();
+      const parsed = parseSMILES(smiles);
+      if (!parsed) {
+        set({ lastMessage: `Failed to parse SMILES: ${smiles}` });
+        return;
+      }
+
+      const before = cloneMolecule(state.molecule);
+      const newMol = parsed;
+      newMol.metadata = computeMetadata(newMol);
+      const ambiguity = analyzeAmbiguity(newMol);
+      const identity = buildIdentity(newMol, ambiguity);
+
+      set({
+        molecule: newMol,
+        identity,
+        ambiguity,
+        undoStack: state.molecule.atoms.length > 0 ? [...state.undoStack, before] : state.undoStack,
+        redoStack: [],
+        actionLog: [...state.actionLog, {
+          id: `action_${Date.now()}`,
+          type: "batch-edit" as EditActionType,
+          description: `Loaded ${name ?? smiles}`,
+          timestamp: Date.now(),
+          moleculeBefore: before,
+          moleculeAfter: cloneMolecule(newMol),
+        }],
+        selectedAtomId: null,
+        selectedBondId: null,
+        candidates: [],
+        showCandidatePanel: false,
+        showLibrary: false,
+        lastMessage: `Loaded ${name ?? "molecule"} (${newMol.atoms.length} atoms, ${newMol.bonds.length} bonds)`,
+        lastWarnings: newMol.metadata.warnings,
+      });
+    },
+
     selectCandidate: (candidateId) => {
       const state = get();
       const candidate = state.candidates.find((c) => c.id === candidateId);
@@ -378,6 +425,7 @@ export const useValenceStore = create<ValenceState>((set, get) => {
     setColorScheme: (scheme) => set({ colorScheme: scheme }),
     toggleImplicitHydrogens: () => set((s) => ({ showImplicitHydrogens: !s.showImplicitHydrogens })),
     toggleAtomLabels: () => set((s) => ({ showAtomLabels: !s.showAtomLabels })),
+    toggleLibrary: () => set((s) => ({ showLibrary: !s.showLibrary })),
     toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
     toggleRightPanel: () => set((s) => ({ showRightPanel: !s.showRightPanel })),
     toggleBottomDrawer: () => set((s) => ({ showBottomDrawer: !s.showBottomDrawer })),

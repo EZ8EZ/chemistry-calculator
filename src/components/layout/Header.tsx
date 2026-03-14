@@ -20,6 +20,7 @@ export function Header() {
     molecule,
     toggleRightPanel,
     showRightPanel,
+    toggleLibrary,
   } = useValenceStore();
 
   return (
@@ -37,6 +38,15 @@ export function Header() {
         <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
           v0.1
         </span>
+        <Tooltip content="Molecule Library (L)">
+          <button
+            className="h-8 px-2.5 rounded-md text-[11px] font-medium hover:bg-accent border border-border transition-all flex items-center gap-1.5"
+            onClick={toggleLibrary}
+          >
+            <span>◇</span>
+            <span>Library</span>
+          </button>
+        </Tooltip>
       </div>
 
       {/* Center: Status message */}
