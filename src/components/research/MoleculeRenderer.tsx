@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 /**
  * Renders a 2D structure drawing from SMILES using SmilesDrawer.
- * Uses SVG output for crisp rendering at any size.
+ * Uses the SmiDrawer convenience class which handles parsing + SVG output.
  */
 export function MoleculeRenderer({
   smiles,
@@ -30,80 +30,156 @@ export function MoleculeRenderer({
 
     const draw = async () => {
       try {
-        // @ts-ignore
-        const SmilesDrawer = await import("smiles-drawer");
+        // @ts-ignore – smiles-drawer doesn't ship types
+        const mod = await import("smiles-drawer");
+        // The module default export or the module itself exposes SmiDrawer
+        const SmiDrawerClass = mod.SmiDrawer || mod.default?.SmiDrawer;
+        const SvgDrawerClass = mod.SvgDrawer || mod.default?.SvgDrawer;
+        const ParserClass = mod.Parser || mod.default?.Parser;
+        const parseFn = mod.parse || mod.default?.parse;
 
-        // Use SvgDrawer for crisp vector output
-        const options = {
-          width,
-          height,
-          bondThickness: 1.5,
-          bondLength: 25,
-          shortBondLength: 0.85,
-          bondSpacing: 4.5,
-          atomVisualization: "default" as const,
-          isomeric: true,
-          debug: false,
-          terminalCarbons: false,
-          explicitHydrogens: false,
-          overlapSensitivity: 0.42,
-          overlapResolutionIterations: 1,
-          compactDrawing: true,
-          fontSizeLarge: 11,
-          fontSizeSmall: 5,
-          padding: 15,
-          themes: {
-            light: {
-              C: "#333333",
-              O: "#e74c3c",
-              N: "#3498db",
-              F: "#27ae60",
-              Cl: "#27ae60",
-              Br: "#e67e22",
-              I: "#8e44ad",
-              P: "#d35400",
-              S: "#f39c12",
-              B: "#e91e63",
-              Si: "#9b59b6",
-              H: "#666666",
-              BACKGROUND: "#f9fafb",
+        // Strategy 1: Use SmiDrawer (highest-level API) to draw into an SVG element
+        if (SmiDrawerClass) {
+          const drawer = new SmiDrawerClass({
+            width,
+            height,
+            bondThickness: 1.5,
+            bondLength: 25,
+            shortBondLength: 0.85,
+            bondSpacing: 4.5,
+            atomVisualization: "default",
+            isomeric: true,
+            debug: false,
+            terminalCarbons: false,
+            explicitHydrogens: false,
+            overlapSensitivity: 0.42,
+            compactDrawing: true,
+            fontSizeLarge: 11,
+            fontSizeSmall: 5,
+            padding: 15,
+            themes: {
+              light: {
+                C: "#333333",
+                O: "#e74c3c",
+                N: "#3498db",
+                F: "#27ae60",
+                Cl: "#27ae60",
+                Br: "#e67e22",
+                I: "#8e44ad",
+                P: "#d35400",
+                S: "#f39c12",
+                B: "#e91e63",
+                Si: "#9b59b6",
+                H: "#666666",
+                BACKGROUND: "#f9fafb",
+              },
             },
-          },
-        };
+          });
 
-        // Parse and draw
-        const parsed = SmilesDrawer.parse(smiles);
-        const svgDrawer = new SmilesDrawer.SvgDrawer(options);
-
-        // Create SVG element
-        const svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svgEl.setAttribute("width", String(width));
-        svgEl.setAttribute("height", String(height));
-        svgEl.style.display = "block";
-
-        el.innerHTML = "";
-        el.appendChild(svgEl);
-
-        svgDrawer.draw(parsed, svgEl, theme, false);
-      } catch {
-        // Fallback: try canvas-based SmiDrawer
-        try {
-          // @ts-ignore
-          const SmilesDrawer = await import("smiles-drawer");
-          const canvas = document.createElement("canvas");
-          canvas.width = width * 2; // Higher res
-          canvas.height = height * 2;
-          canvas.style.width = width + "px";
-          canvas.style.height = height + "px";
+          const svgEl = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+          );
+          svgEl.setAttribute("width", String(width));
+          svgEl.setAttribute("height", String(height));
+          svgEl.style.display = "block";
 
           el.innerHTML = "";
-          el.appendChild(canvas);
+          el.appendChild(svgEl);
 
-          const drawer = new SmilesDrawer.SmiDrawer({ width: width * 2, height: height * 2 });
-          drawer.draw(smiles, canvas, theme);
-        } catch {
-          setFailed(true);
+          // SmiDrawer.draw(smiles, target, theme, successCb, errorCb)
+          drawer.draw(
+            smiles,
+            svgEl,
+            theme,
+            () => {}, // success
+            () => {
+              // If SmiDrawer fails, show SMILES text
+              setFailed(true);
+            }
+          );
+          return;
         }
+
+        // Strategy 2: Use SvgDrawer + Parser directly
+        if (SvgDrawerClass && (ParserClass || parseFn)) {
+          const parseTree = parseFn
+            ? await new Promise<unknown>((resolve, reject) => {
+                parseFn(smiles, resolve, reject);
+              })
+            : ParserClass.parse(smiles);
+
+          const svgDrawer = new SvgDrawerClass({
+            width,
+            height,
+            bondThickness: 1.5,
+            bondLength: 25,
+            compactDrawing: true,
+            padding: 15,
+            themes: {
+              light: {
+                C: "#333333",
+                O: "#e74c3c",
+                N: "#3498db",
+                F: "#27ae60",
+                Cl: "#27ae60",
+                Br: "#e67e22",
+                I: "#8e44ad",
+                P: "#d35400",
+                S: "#f39c12",
+                B: "#e91e63",
+                Si: "#9b59b6",
+                H: "#666666",
+                BACKGROUND: "#f9fafb",
+              },
+            },
+          });
+
+          const svgEl = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+          );
+          svgEl.setAttribute("width", String(width));
+          svgEl.setAttribute("height", String(height));
+          svgEl.style.display = "block";
+
+          el.innerHTML = "";
+          el.appendChild(svgEl);
+
+          svgDrawer.draw(parseTree, svgEl, theme);
+          return;
+        }
+
+        // Strategy 3: Callback-based parse (original SmilesDrawer namespace)
+        const parseCallback = parseFn || mod.parse;
+        const DrawerClass = mod.Drawer || mod.default?.Drawer;
+        if (parseCallback && (SvgDrawerClass || DrawerClass)) {
+          parseCallback(
+            smiles,
+            (tree: unknown) => {
+              const drawerClass = SvgDrawerClass || DrawerClass;
+              const d = new drawerClass({ width, height, compactDrawing: true, padding: 15 });
+              const svgEl = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "svg"
+              );
+              svgEl.setAttribute("width", String(width));
+              svgEl.setAttribute("height", String(height));
+              svgEl.style.display = "block";
+              el.innerHTML = "";
+              el.appendChild(svgEl);
+              d.draw(tree, svgEl, theme);
+            },
+            () => {
+              setFailed(true);
+            }
+          );
+          return;
+        }
+
+        setFailed(true);
+      } catch {
+        setFailed(true);
       }
     };
 
@@ -112,7 +188,10 @@ export function MoleculeRenderer({
 
   if (failed) {
     return (
-      <div className={`flex items-center justify-center bg-gray-50 rounded-lg ${className}`} style={{ width, height }}>
+      <div
+        className={`flex items-center justify-center bg-gray-50 rounded-lg ${className}`}
+        style={{ width, height }}
+      >
         <div className="text-center px-4">
           <div className="font-mono text-[11px] text-gray-400 break-all leading-relaxed">
             {smiles}
