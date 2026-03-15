@@ -138,13 +138,38 @@ function StepDetail({ step, stepIndex }: { step: CycleStep; stepIndex: number })
         {step.description}
       </p>
 
-      {/* Electron config badge */}
-      {step.electronConfig && (
-        <div
-          className="inline-block px-3 py-1.5 rounded-lg text-xs font-semibold"
-          style={{ backgroundColor: color + "10", color }}
-        >
-          {step.electronConfig}
+      {/* Info badges */}
+      <div className="flex flex-wrap gap-2">
+        {step.electronConfig && (
+          <div
+            className="inline-block px-3 py-1.5 rounded-lg text-xs font-semibold"
+            style={{ backgroundColor: color + "10", color }}
+          >
+            {step.electronConfig}
+          </div>
+        )}
+        {step.bondEvent && (
+          <div className="inline-block px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100">
+            {step.bondEvent}
+          </div>
+        )}
+      </div>
+
+      {/* Evidence & Significance */}
+      {(step.evidence || step.significance) && (
+        <div className="grid grid-cols-1 gap-3 mt-1">
+          {step.evidence && (
+            <div className="px-4 py-3 rounded-xl bg-blue-50/60 border border-blue-100">
+              <div className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1">Evidence</div>
+              <p className="text-xs text-blue-800 leading-relaxed">{step.evidence}</p>
+            </div>
+          )}
+          {step.significance && (
+            <div className="px-4 py-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
+              <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Significance</div>
+              <p className="text-xs text-emerald-800 leading-relaxed">{step.significance}</p>
+            </div>
+          )}
         </div>
       )}
     </motion.div>
