@@ -11,92 +11,75 @@ import {
   type ResearchTheme,
 } from "@/lib/research/data";
 
-function TimelineDot({ pub, isActive, onClick }: { pub: Publication; isActive: boolean; onClick: () => void }) {
-  const mainTheme = pub.themes[0];
-  const color = THEME_COLORS[mainTheme] ?? "#6366F1";
-
-  return (
-    <button
-      onClick={onClick}
-      className="group relative flex flex-col items-center"
-      title={pub.title}
-    >
-      <div
-        className={`w-4 h-4 rounded-full border-2 transition-all ${
-          isActive ? "scale-125" : "group-hover:scale-110"
-        } ${pub.landmark ? "ring-2 ring-offset-2 ring-offset-background" : ""}`}
-        style={{
-          backgroundColor: isActive ? color : "transparent",
-          borderColor: color,
-          ...(pub.landmark ? { ringColor: color } : {}),
-        }}
-      />
-    </button>
-  );
-}
+// Slightly darker colors for light theme legibility
+const LIGHT_THEME_COLORS: Record<ResearchTheme, string> = {
+  "metalloradical-catalysis": "#2563EB",
+  "carbene-transfer": "#7C3AED",
+  "nitrene-transfer": "#DB2777",
+  "cyclopropanation": "#D97706",
+  "aziridination": "#059669",
+  "c-h-amination": "#DC2626",
+  "c-h-alkylation": "#EA580C",
+  "porphyrin-design": "#0891B2",
+  "mechanism": "#4F46E5",
+  "olefination": "#65A30D",
+  "iron-catalysis": "#C026D3",
+};
 
 function PubCard({ pub }: { pub: Publication }) {
-  const mainTheme = pub.themes[0];
-  const color = THEME_COLORS[mainTheme] ?? "#6366F1";
+  const color = LIGHT_THEME_COLORS[pub.themes[0]] ?? "#4F46E5";
 
   return (
     <motion.div
       key={pub.id}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border bg-card p-6 space-y-4"
+      className="rounded-2xl border border-gray-200 bg-white p-8 space-y-5 shadow-sm"
     >
       {/* Year + journal */}
-      <div className="flex items-center gap-3">
-        <span className="text-2xl font-bold text-foreground">{pub.year}</span>
-        <span className="text-sm text-muted-foreground italic">{pub.journal}</span>
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="text-3xl font-extrabold text-gray-900">{pub.year}</span>
+        <span className="text-sm text-gray-400 italic">{pub.journal}</span>
         {pub.landmark && (
-          <span className="px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-wider border border-amber-200">
             Landmark
           </span>
         )}
       </div>
 
-      {/* Title */}
-      <h3 className="text-base font-semibold text-foreground leading-snug">
-        {pub.title}
-      </h3>
+      <h3 className="text-lg font-bold text-gray-900 leading-snug">{pub.title}</h3>
+      <p className="text-xs text-gray-500">{pub.authors}</p>
 
-      {/* Authors */}
-      <p className="text-xs text-muted-foreground">{pub.authors}</p>
-
-      {/* Highlight */}
-      <p className="text-sm text-muted-foreground leading-relaxed border-l-2 pl-4" style={{ borderColor: color }}>
+      <p className="text-sm text-gray-600 leading-relaxed border-l-[3px] pl-4" style={{ borderColor: color }}>
         {pub.highlight}
       </p>
 
-      {/* Themes */}
+      {/* Theme tags */}
       <div className="flex flex-wrap gap-1.5">
-        {pub.themes.map((theme) => (
-          <span
-            key={theme}
-            className="text-[10px] font-medium px-2 py-0.5 rounded-full"
-            style={{
-              backgroundColor: THEME_COLORS[theme] + "15",
-              color: THEME_COLORS[theme],
-            }}
-          >
-            {THEME_LABELS[theme]}
-          </span>
-        ))}
+        {pub.themes.map((theme) => {
+          const c = LIGHT_THEME_COLORS[theme] ?? "#4F46E5";
+          return (
+            <span
+              key={theme}
+              className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full"
+              style={{ backgroundColor: c + "10", color: c, border: `1px solid ${c}25` }}
+            >
+              {THEME_LABELS[theme]}
+            </span>
+          );
+        })}
       </div>
 
-      {/* DOI link */}
       <a
         href={getPublicationUrl(pub.doi)}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
         </svg>
-        Read paper (DOI: {pub.doi})
+        Read paper &mdash; DOI: {pub.doi}
       </a>
     </motion.div>
   );
@@ -108,35 +91,21 @@ export function PublicationTimeline() {
   );
   const [themeFilter, setThemeFilter] = useState<ResearchTheme | null>(null);
 
-  // Sort by year
   const sorted = [...PUBLICATIONS].sort((a, b) => a.year - b.year);
-  const filtered = themeFilter
-    ? sorted.filter((p) => p.themes.includes(themeFilter))
-    : sorted;
-
+  const filtered = themeFilter ? sorted.filter((p) => p.themes.includes(themeFilter)) : sorted;
   const activePub = PUBLICATIONS.find((p) => p.id === selectedPub) ?? filtered[0];
 
-  // Unique themes present
-  const allThemes = Array.from(
-    new Set(PUBLICATIONS.flatMap((p) => p.themes))
-  ).sort();
+  const allThemes = Array.from(new Set(PUBLICATIONS.flatMap((p) => p.themes))).sort();
 
   return (
-    <section id="publications" className="py-24 px-6 bg-card/30">
+    <section id="publications" className="py-24 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Publication Timeline
-          </h2>
-          <p className="text-muted-foreground max-w-2xl">
-            Key publications tracing the development of metalloradical catalysis
-            from concept to broad synthetic utility. Click any dot to explore.
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+          <div className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">Research Output</div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">Publication Timeline</h2>
+          <p className="text-gray-500 max-w-2xl text-base">
+            Key publications tracing the development of metalloradical catalysis.
+            Click any point on the timeline to explore.
           </p>
         </motion.div>
 
@@ -144,70 +113,77 @@ export function PublicationTimeline() {
         <div className="flex flex-wrap gap-1.5 mb-8">
           <button
             onClick={() => setThemeFilter(null)}
-            className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-              themeFilter === null
-                ? "bg-foreground text-background"
-                : "border border-border text-muted-foreground hover:text-foreground"
+            className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all ${
+              themeFilter === null ? "bg-gray-900 text-white" : "bg-white border border-gray-200 text-gray-500 hover:text-gray-800"
             }`}
           >
             All
           </button>
-          {allThemes.map((theme) => (
-            <button
-              key={theme}
-              onClick={() => setThemeFilter(theme)}
-              className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all ${
-                themeFilter === theme
-                  ? "text-white"
-                  : "border border-border text-muted-foreground hover:text-foreground"
-              }`}
-              style={
-                themeFilter === theme
-                  ? { backgroundColor: THEME_COLORS[theme] }
-                  : undefined
-              }
-            >
-              {THEME_LABELS[theme]}
-            </button>
-          ))}
+          {allThemes.map((theme) => {
+            const c = LIGHT_THEME_COLORS[theme] ?? "#4F46E5";
+            return (
+              <button
+                key={theme}
+                onClick={() => setThemeFilter(theme)}
+                className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all ${
+                  themeFilter === theme ? "text-white" : "bg-white border border-gray-200 text-gray-500 hover:text-gray-800"
+                }`}
+                style={themeFilter === theme ? { backgroundColor: c } : undefined}
+              >
+                {THEME_LABELS[theme]}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Timeline strip */}
-        <div className="relative mb-10">
-          {/* Horizontal line */}
-          <div className="absolute top-2 left-0 right-0 h-px bg-border" />
-
-          {/* Year labels + dots */}
-          <div className="flex items-start justify-between overflow-x-auto pb-4 gap-3">
-            {filtered.map((pub) => (
-              <div key={pub.id} className="flex flex-col items-center min-w-[40px]">
-                <TimelineDot
-                  pub={pub}
-                  isActive={pub.id === selectedPub}
+        {/* Timeline */}
+        <div className="relative mb-10 py-2">
+          <div className="absolute top-[18px] left-0 right-0 h-0.5 bg-gray-200 rounded-full" />
+          <div className="flex items-start justify-between overflow-x-auto pb-6 gap-2">
+            {filtered.map((pub) => {
+              const c = LIGHT_THEME_COLORS[pub.themes[0]] ?? "#4F46E5";
+              const isActive = pub.id === selectedPub;
+              return (
+                <button
+                  key={pub.id}
                   onClick={() => setSelectedPub(pub.id)}
-                />
-                <span className="text-[9px] text-muted-foreground mt-2 whitespace-nowrap">
-                  {pub.year}
-                </span>
-              </div>
-            ))}
+                  className="flex flex-col items-center min-w-[44px] group"
+                  title={pub.title}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full border-[2.5px] transition-all ${
+                      isActive ? "scale-150 shadow-md" : "group-hover:scale-125"
+                    } ${pub.landmark ? "ring-2 ring-offset-2" : ""}`}
+                    style={{
+                      backgroundColor: isActive ? c : "white",
+                      borderColor: c,
+                      ...(pub.landmark ? { ringColor: c + "40" } : {}),
+                    }}
+                  />
+                  <span className={`text-[9px] mt-3 whitespace-nowrap transition-colors ${
+                    isActive ? "text-gray-900 font-bold" : "text-gray-400"
+                  }`}>
+                    {pub.year}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Selected publication detail */}
         {activePub && <PubCard pub={activePub} />}
 
-        {/* Stats summary */}
+        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
           {[
-            { label: "Publications", value: PUBLICATIONS.length.toString() },
+            { label: "Selected Publications", value: PUBLICATIONS.length.toString() },
             { label: "Landmark Papers", value: PUBLICATIONS.filter((p) => p.landmark).length.toString() },
             { label: "Year Span", value: `${Math.min(...PUBLICATIONS.map((p) => p.year))}\u2013${Math.max(...PUBLICATIONS.map((p) => p.year))}` },
             { label: "Research Themes", value: allThemes.length.toString() },
           ].map((stat) => (
-            <div key={stat.label} className="text-center p-4 rounded-lg border border-border bg-card/50">
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
+            <div key={stat.label} className="text-center p-5 rounded-xl border border-gray-100 bg-gray-50/80">
+              <div className="text-2xl font-extrabold text-gray-900">{stat.value}</div>
+              <div className="text-xs text-gray-400 mt-1 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>

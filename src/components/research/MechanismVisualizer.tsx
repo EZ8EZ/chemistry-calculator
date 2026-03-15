@@ -10,6 +10,8 @@ import {
   type CycleStep,
 } from "@/lib/research/data";
 
+const STEP_COLORS = ["#2563EB", "#7C3AED", "#DB2777", "#D97706", "#059669"];
+
 function CycleWheel({
   cycle,
   activeStep,
@@ -20,50 +22,45 @@ function CycleWheel({
   onStepClick: (i: number) => void;
 }) {
   const n = cycle.steps.length;
-  const cx = 200;
-  const cy = 200;
-  const r = 150;
+  const cx = 220;
+  const cy = 220;
+  const r = 170;
 
   return (
-    <svg viewBox="0 0 400 400" className="w-full max-w-[400px] mx-auto">
-      {/* Central label */}
-      <text x={cx} y={cy - 10} textAnchor="middle" className="fill-muted-foreground text-[11px]">
+    <svg viewBox="0 0 440 440" className="w-full max-w-[440px] mx-auto">
+      {/* Center */}
+      <circle cx={cx} cy={cy} r={45} fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="2" />
+      <text x={cx} y={cy - 6} textAnchor="middle" className="text-[11px] fill-gray-400">
         Catalytic
       </text>
-      <text x={cx} y={cy + 8} textAnchor="middle" className="fill-foreground text-[13px] font-semibold">
+      <text x={cx} y={cy + 10} textAnchor="middle" className="text-[13px] fill-gray-700 font-bold">
         Cycle
       </text>
 
-      {/* Connecting arrows */}
+      {/* Arrow paths */}
+      <defs>
+        <marker id="arrowhead-light" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <path d="M0,0 L10,3.5 L0,7" fill="#CBD5E1" />
+        </marker>
+      </defs>
       {cycle.steps.map((_, i) => {
-        const angle1 = (i / n) * 2 * Math.PI - Math.PI / 2;
-        const angle2 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
-        const x1 = cx + r * 0.75 * Math.cos(angle1);
-        const y1 = cy + r * 0.75 * Math.sin(angle1);
-        const x2 = cx + r * 0.75 * Math.cos(angle2);
-        const y2 = cy + r * 0.75 * Math.sin(angle2);
-        const midX = cx + r * 0.55 * Math.cos((angle1 + angle2) / 2);
-        const midY = cy + r * 0.55 * Math.sin((angle1 + angle2) / 2);
+        const a1 = (i / n) * 2 * Math.PI - Math.PI / 2;
+        const a2 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
+        const x1 = cx + r * 0.72 * Math.cos(a1);
+        const y1 = cy + r * 0.72 * Math.sin(a1);
+        const x2 = cx + r * 0.72 * Math.cos(a2);
+        const y2 = cy + r * 0.72 * Math.sin(a2);
+        const mx = cx + r * 0.5 * Math.cos((a1 + a2) / 2);
+        const my = cy + r * 0.5 * Math.sin((a1 + a2) / 2);
         return (
           <path
-            key={`arrow-${i}`}
-            d={`M ${x1} ${y1} Q ${midX} ${midY} ${x2} ${y2}`}
-            fill="none"
-            stroke="hsl(var(--muted-foreground))"
-            strokeWidth="1.5"
-            strokeDasharray="4 3"
-            opacity={0.3}
-            markerEnd="url(#arrowhead)"
+            key={`a-${i}`}
+            d={`M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`}
+            fill="none" stroke="#CBD5E1" strokeWidth="2" strokeDasharray="6 4"
+            markerEnd="url(#arrowhead-light)"
           />
         );
       })}
-
-      {/* Arrowhead marker */}
-      <defs>
-        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-          <path d="M0,0 L8,3 L0,6" fill="hsl(var(--muted-foreground))" opacity="0.4" />
-        </marker>
-      </defs>
 
       {/* Step nodes */}
       {cycle.steps.map((step, i) => {
@@ -71,40 +68,36 @@ function CycleWheel({
         const x = cx + r * Math.cos(angle);
         const y = cy + r * Math.sin(angle);
         const isActive = i === activeStep;
+        const color = STEP_COLORS[i % STEP_COLORS.length];
 
         return (
-          <g
-            key={step.id}
-            onClick={() => onStepClick(i)}
-            className="cursor-pointer"
-          >
-            {/* Node circle */}
+          <g key={step.id} onClick={() => onStepClick(i)} className="cursor-pointer">
+            {/* Glow for active */}
+            {isActive && (
+              <circle cx={x} cy={y} r={40} fill={color + "10"} className="animate-pulse" />
+            )}
+            {/* Node */}
             <circle
-              cx={x}
-              cy={y}
-              r={isActive ? 32 : 26}
-              fill={isActive ? "hsl(var(--primary))" : "hsl(var(--card))"}
-              stroke={isActive ? "hsl(var(--primary))" : "hsl(var(--border))"}
-              strokeWidth={isActive ? 2 : 1.5}
+              cx={x} cy={y}
+              r={isActive ? 34 : 28}
+              fill={isActive ? color : "white"}
+              stroke={isActive ? color : "#E2E8F0"}
+              strokeWidth={isActive ? 2.5 : 2}
               className="transition-all duration-300"
             />
             {/* Step number */}
             <text
-              x={x}
-              y={y - 4}
-              textAnchor="middle"
-              className={`text-[10px] ${isActive ? "fill-primary-foreground" : "fill-muted-foreground"}`}
+              x={x} y={y - 4} textAnchor="middle"
+              className={`text-[10px] font-medium ${isActive ? "fill-white" : "fill-gray-400"}`}
             >
               Step {i + 1}
             </text>
-            {/* Step label */}
+            {/* Label */}
             <text
-              x={x}
-              y={y + 8}
-              textAnchor="middle"
-              className={`text-[8px] font-medium ${isActive ? "fill-primary-foreground" : "fill-foreground"}`}
+              x={x} y={y + 9} textAnchor="middle"
+              className={`text-[8px] font-bold ${isActive ? "fill-white" : "fill-gray-600"}`}
             >
-              {step.label.length > 14 ? step.label.slice(0, 12) + "\u2026" : step.label}
+              {step.label.length > 16 ? step.label.slice(0, 14) + "\u2026" : step.label}
             </text>
           </g>
         );
@@ -114,38 +107,44 @@ function CycleWheel({
 }
 
 function StepDetail({ step, stepIndex }: { step: CycleStep; stepIndex: number }) {
+  const color = STEP_COLORS[stepIndex % STEP_COLORS.length];
+
   return (
     <motion.div
       key={step.id}
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-4"
+      transition={{ duration: 0.25 }}
+      className="space-y-5"
     >
-      <div className="flex items-baseline gap-3">
-        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
+      <div className="flex items-center gap-3">
+        <span
+          className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white"
+          style={{ backgroundColor: color }}
+        >
           {stepIndex + 1}
         </span>
-        <h4 className="text-lg font-semibold text-foreground">{step.label}</h4>
+        <h4 className="text-xl font-bold text-gray-900">{step.label}</h4>
       </div>
 
       {/* Species */}
-      <div className="px-4 py-3 rounded-lg bg-muted/50 border border-border font-mono text-sm text-foreground">
+      <div className="px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 font-mono text-sm text-gray-800">
         {step.species}
       </div>
 
       {/* Description */}
-      <p className="text-sm text-muted-foreground leading-relaxed">
+      <p className="text-sm text-gray-600 leading-relaxed">
         {step.description}
       </p>
 
-      {/* Electron configuration */}
+      {/* Electron config badge */}
       {step.electronConfig && (
-        <div className="flex items-center gap-2 text-xs">
-          <span className="px-2 py-1 rounded bg-primary/10 text-primary font-medium">
-            {step.electronConfig}
-          </span>
+        <div
+          className="inline-block px-3 py-1.5 rounded-lg text-xs font-semibold"
+          style={{ backgroundColor: color + "10", color }}
+        >
+          {step.electronConfig}
         </div>
       )}
     </motion.div>
@@ -157,18 +156,12 @@ export function MechanismVisualizer() {
   const [activeStep, setActiveStep] = useState(0);
 
   const cycle = CATALYTIC_CYCLES.find((c) => c.id === activeCycleId)!;
+  const relatedPubs = cycle.publicationIds.map(getPublicationById).filter(Boolean);
 
-  const handleCycleChange = (id: string) => {
-    setActiveCycleId(id);
-    setActiveStep(0);
-  };
-
-  const relatedPubs = cycle.publicationIds
-    .map(getPublicationById)
-    .filter(Boolean);
+  const handleCycleChange = (id: string) => { setActiveCycleId(id); setActiveStep(0); };
 
   return (
-    <section id="mechanism" className="py-24 px-6 bg-card/30">
+    <section id="mechanism" className="py-24 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -177,12 +170,15 @@ export function MechanismVisualizer() {
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Catalytic Mechanisms
+          <div className="text-xs font-bold text-violet-500 uppercase tracking-widest mb-2">
+            Mechanistic Detail
+          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">
+            Catalytic Cycles
           </h2>
-          <p className="text-muted-foreground max-w-2xl">
-            Interactive catalytic cycles showing the stepwise radical mechanism
-            at the heart of metalloradical catalysis. Click each step for detail.
+          <p className="text-gray-500 max-w-2xl text-base">
+            Interactive catalytic cycles showing the stepwise radical mechanism.
+            Click each step for electron configuration details and mechanistic description.
           </p>
         </motion.div>
 
@@ -192,10 +188,10 @@ export function MechanismVisualizer() {
             <button
               key={c.id}
               onClick={() => handleCycleChange(c.id)}
-              className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                 activeCycleId === c.id
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                  : "bg-card border border-border text-muted-foreground hover:text-foreground"
+                  ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                  : "bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100"
               }`}
             >
               {c.name}
@@ -203,67 +199,55 @@ export function MechanismVisualizer() {
           ))}
         </div>
 
-        {/* Main content: cycle wheel + detail */}
+        {/* Cycle wheel + detail */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Cycle wheel */}
           <div>
-            <CycleWheel
-              cycle={cycle}
-              activeStep={activeStep}
-              onStepClick={setActiveStep}
-            />
-            <p className="text-center text-xs text-muted-foreground mt-4 italic">
+            <CycleWheel cycle={cycle} activeStep={activeStep} onStepClick={setActiveStep} />
+            <p className="text-center text-xs text-gray-400 mt-4 italic max-w-sm mx-auto">
               {cycle.description}
             </p>
           </div>
 
-          {/* Step detail + papers */}
           <div className="space-y-8">
             <AnimatePresence mode="wait">
-              <StepDetail
-                key={cycle.steps[activeStep].id}
-                step={cycle.steps[activeStep]}
-                stepIndex={activeStep}
-              />
+              <StepDetail key={cycle.steps[activeStep].id} step={cycle.steps[activeStep]} stepIndex={activeStep} />
             </AnimatePresence>
 
-            {/* Step navigation */}
+            {/* Nav buttons */}
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveStep((s) => (s > 0 ? s - 1 : cycle.steps.length - 1))}
-                className="px-3 py-1.5 rounded border border-border text-sm hover:bg-accent"
+                className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 &larr; Previous
               </button>
               <button
                 onClick={() => setActiveStep((s) => (s < cycle.steps.length - 1 ? s + 1 : 0))}
-                className="px-3 py-1.5 rounded border border-border text-sm hover:bg-accent"
+                className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 Next &rarr;
               </button>
             </div>
 
-            {/* Related publications */}
+            {/* Papers */}
             {relatedPubs.length > 0 && (
-              <div className="border-t border-border pt-6">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Key Publications for This Mechanism
+              <div className="border-t border-gray-100 pt-6">
+                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+                  Key Publications
                 </h4>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {relatedPubs.map((p) => p && (
                     <a
                       key={p.id}
                       href={getPublicationUrl(p.doi)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block p-3 rounded-lg border border-border hover:border-primary/40 transition-colors"
+                      className="block p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:shadow-sm transition-all bg-gray-50/50"
                     >
-                      <div className="text-xs font-medium text-foreground leading-snug">
-                        {p.title}
-                      </div>
-                      <div className="text-[10px] text-muted-foreground mt-1">
+                      <div className="text-xs font-semibold text-gray-800 leading-snug">{p.title}</div>
+                      <div className="text-[10px] text-gray-400 mt-1.5">
                         {p.authors} &mdash; <span className="italic">{p.journal}</span> {p.year}
-                        {p.landmark && <span className="ml-1 text-amber-400">&#9733; Landmark</span>}
+                        {p.landmark && <span className="ml-1 text-amber-500 font-bold">&#9733; Landmark</span>}
                       </div>
                     </a>
                   ))}

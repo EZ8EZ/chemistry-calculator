@@ -8,44 +8,17 @@
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
     --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
     --accent: 210 40% 96%;
     --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
     --border: 214 32% 91%;
-    --input: 214 32% 91%;
     --ring: 221 83% 53%;
     --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 228 20% 6%;
-    --foreground: 210 20% 92%;
-    --card: 228 18% 9%;
-    --card-foreground: 210 20% 92%;
-    --popover: 228 18% 9%;
-    --popover-foreground: 210 20% 92%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 4%;
-    --secondary: 217 19% 15%;
-    --secondary-foreground: 210 20% 92%;
-    --muted: 217 19% 15%;
-    --muted-foreground: 215 16% 57%;
-    --accent: 217 19% 15%;
-    --accent-foreground: 210 20% 92%;
-    --destructive: 0 63% 50%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 15% 16%;
-    --input: 217 15% 16%;
-    --ring: 217 91% 60%;
   }
 }
 
@@ -54,55 +27,42 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-foreground;
   }
 }
 
-/* 3D viewer container */
-.mol-viewer-container canvas {
-  border-radius: var(--radius);
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
-}
-
-/* Smooth scroll behavior */
+/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Chemistry notation */
-.chem-formula {
-  font-variant-numeric: tabular-nums;
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
 }
 
-.chem-formula sub {
-  font-size: 0.75em;
-  vertical-align: sub;
-}
+/* Chemistry subscripts/superscripts */
+.chem-formula sub { font-size: 0.75em; vertical-align: sub; }
+.chem-formula sup { font-size: 0.7em; vertical-align: super; }
 
-.chem-formula sup {
-  font-size: 0.7em;
-  vertical-align: super;
-}
-
-/* Selection highlight color */
+/* Selection color */
 ::selection {
-  background-color: hsl(var(--primary) / 0.3);
+  background-color: hsl(221 83% 53% / 0.15);
+}
+
+/* SmilesDrawer canvas styling */
+.smiles-canvas {
+  display: block;
+  margin: 0 auto;
 }

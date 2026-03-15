@@ -8,56 +8,15 @@ import {
   getPublicationUrl,
   type Reaction,
 } from "@/lib/research/data";
+import { MoleculeRenderer } from "./MoleculeRenderer";
 
 const REACTION_TYPE_LABELS: Record<string, { label: string; color: string }> = {
-  cyclopropanation: { label: "Cyclopropanation", color: "#F59E0B" },
-  aziridination: { label: "Aziridination", color: "#10B981" },
-  "c-h-amination": { label: "C\u2013H Amination", color: "#EF4444" },
-  "c-h-alkylation": { label: "C\u2013H Alkylation", color: "#F97316" },
-  olefination: { label: "Olefination", color: "#84CC16" },
+  cyclopropanation: { label: "Cyclopropanation", color: "#D97706" },
+  aziridination: { label: "Aziridination", color: "#059669" },
+  "c-h-amination": { label: "C\u2013H Amination", color: "#DC2626" },
+  "c-h-alkylation": { label: "C\u2013H Alkylation", color: "#EA580C" },
+  olefination: { label: "Olefination", color: "#65A30D" },
 };
-
-function ReactionArrow() {
-  return (
-    <div className="flex flex-col items-center justify-center px-2 py-4 md:px-4">
-      <svg width="80" height="40" viewBox="0 0 80 40" className="text-muted-foreground">
-        <line x1="0" y1="20" x2="65" y2="20" stroke="currentColor" strokeWidth="2" />
-        <polygon points="65,14 80,20 65,26" fill="currentColor" />
-      </svg>
-    </div>
-  );
-}
-
-function MoleculeBox({
-  label,
-  name,
-  smiles,
-  color,
-}: {
-  label: string;
-  name: string;
-  smiles: string;
-  color?: string;
-}) {
-  return (
-    <div className="text-center space-y-1.5 min-w-[100px]">
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </div>
-      <div
-        className="px-3 py-2.5 rounded-lg border border-border bg-card"
-        style={color ? { borderColor: color + "40" } : undefined}
-      >
-        <div className="text-sm font-medium text-foreground">{name}</div>
-        {smiles && (
-          <div className="font-mono text-[9px] text-muted-foreground mt-1 truncate max-w-[140px]">
-            {smiles}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function ReactionCard({ reaction }: { reaction: Reaction }) {
   const [showDetail, setShowDetail] = useState(false);
@@ -69,90 +28,94 @@ function ReactionCard({ reaction }: { reaction: Reaction }) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="rounded-xl border border-border bg-card/80 backdrop-blur overflow-hidden"
+      className="rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-lg transition-shadow"
     >
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <div>
-          <h3 className="text-base font-semibold text-foreground">{reaction.name}</h3>
+          <h3 className="text-lg font-bold text-gray-900">{reaction.name}</h3>
           <span
-            className="inline-block text-[10px] font-bold uppercase tracking-widest mt-1 px-2 py-0.5 rounded-full"
-            style={{ backgroundColor: typeInfo.color + "20", color: typeInfo.color }}
+            className="inline-block text-[10px] font-bold uppercase tracking-widest mt-1 px-2.5 py-0.5 rounded-full"
+            style={{ backgroundColor: typeInfo.color + "12", color: typeInfo.color }}
           >
             {typeInfo.label}
           </span>
         </div>
         <button
           onClick={() => setShowDetail(!showDetail)}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
         >
-          {showDetail ? "Hide detail" : "Show detail"}
+          {showDetail ? "Hide detail" : "View detail"}
         </button>
       </div>
 
-      {/* Reaction scheme */}
-      <div className="px-6 py-6 flex items-center justify-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto">
-        <MoleculeBox label="Substrate" name={reaction.substrate.name} smiles={reaction.substrate.smiles} />
-        <span className="text-muted-foreground text-lg">+</span>
-        <MoleculeBox label="Reagent" name={reaction.reagent.name} smiles={reaction.reagent.smiles} />
-
-        <div className="flex flex-col items-center">
-          <ReactionArrow />
-          <div className="text-[10px] text-muted-foreground -mt-1">
-            {reaction.catalyst.name}
-          </div>
-          <div className="text-[9px] text-muted-foreground/60">
-            {reaction.conditions}
-          </div>
+      {/* Reaction scheme with structure drawings */}
+      <div className="px-6 py-8 flex items-center justify-center gap-4 flex-wrap lg:flex-nowrap">
+        {/* Substrate */}
+        <div className="text-center">
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Substrate</div>
+          <MoleculeRenderer smiles={reaction.substrate.smiles} width={140} height={100} className="rounded-lg border border-gray-100" />
+          <div className="text-xs font-semibold text-gray-700 mt-2">{reaction.substrate.name}</div>
         </div>
 
-        <MoleculeBox
-          label="Product"
-          name={reaction.product.name}
-          smiles={reaction.product.smiles}
-          color={typeInfo.color}
-        />
+        <span className="text-gray-300 text-2xl font-light">+</span>
+
+        {/* Reagent */}
+        <div className="text-center">
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Reagent</div>
+          <MoleculeRenderer smiles={reaction.reagent.smiles} width={140} height={100} className="rounded-lg border border-gray-100" />
+          <div className="text-xs font-semibold text-gray-700 mt-2">{reaction.reagent.name}</div>
+        </div>
+
+        {/* Arrow + catalyst */}
+        <div className="flex flex-col items-center px-4">
+          <svg width="100" height="32" viewBox="0 0 100 32" className="text-gray-400">
+            <line x1="0" y1="16" x2="82" y2="16" stroke="currentColor" strokeWidth="2.5" />
+            <polygon points="82,10 100,16 82,22" fill="currentColor" />
+          </svg>
+          <div className="text-[11px] font-semibold text-gray-600 mt-1">{reaction.catalyst.name}</div>
+          <div className="text-[10px] text-gray-400">{reaction.conditions}</div>
+        </div>
+
+        {/* Product */}
+        <div className="text-center">
+          <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: typeInfo.color }}>Product</div>
+          <div className="rounded-lg border-2 overflow-hidden" style={{ borderColor: typeInfo.color + "30" }}>
+            <MoleculeRenderer smiles={reaction.product.smiles} width={140} height={100} />
+          </div>
+          <div className="text-xs font-semibold text-gray-700 mt-2">{reaction.product.name}</div>
+        </div>
       </div>
 
       {/* Detail panel */}
       {showDetail && (
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          className="px-6 py-4 border-t border-border bg-muted/20 space-y-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="px-6 py-5 border-t border-gray-100 bg-gray-50 space-y-4"
         >
-          {/* Summary */}
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {reaction.summary}
-          </p>
+          <p className="text-sm text-gray-600 leading-relaxed">{reaction.summary}</p>
 
-          {/* Key intermediate */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-              Key Intermediate:
-            </span>
-            <span className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Key Intermediate:</span>
+            <span className="font-mono text-xs text-blue-700 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
               {reaction.intermediate}
             </span>
           </div>
 
-          {/* Papers */}
           {papers.length > 0 && (
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                Publications
-              </span>
+            <div className="space-y-2 pt-2">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Publications</span>
               {papers.map((p) => p && (
                 <a
                   key={p.id}
                   href={getPublicationUrl(p.doi)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-xs text-primary/80 hover:text-primary hover:underline"
+                  className="block text-xs text-blue-600 hover:text-blue-800 hover:underline"
                 >
-                  {p.authors.split(";")[0]}; et al.{" "}
-                  <span className="italic">{p.journal}</span> {p.year}.
-                  {p.landmark && <span className="ml-1 text-amber-400">&#9733;</span>}
+                  {p.authors.split(";")[0]}; et al. <span className="italic">{p.journal}</span> {p.year}.
+                  {p.landmark && <span className="ml-1 text-amber-500">&#9733;</span>}
                 </a>
               ))}
             </div>
@@ -165,38 +128,26 @@ function ReactionCard({ reaction }: { reaction: Reaction }) {
 
 export function ReactionScope() {
   const [filter, setFilter] = useState<string | null>(null);
-
-  const filtered = filter
-    ? REACTIONS.filter((r) => r.type === filter)
-    : REACTIONS;
+  const filtered = filter ? REACTIONS.filter((r) => r.type === filter) : REACTIONS;
 
   return (
-    <section id="reactions" className="py-24 px-6">
+    <section id="reactions" className="py-24 px-6 bg-gray-50/50">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Reaction Scope
-          </h2>
-          <p className="text-muted-foreground max-w-2xl">
-            Key transformations enabled by metalloradical catalysis.
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-12">
+          <div className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-2">Reaction Scope</div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">Key Transformations</h2>
+          <p className="text-gray-500 max-w-2xl text-base">
             Each reaction proceeds through a distinct radical intermediate.
+            Structures are drawn for substrate, reagent, and product.
           </p>
         </motion.div>
 
-        {/* Type filter */}
+        {/* Filter */}
         <div className="flex flex-wrap gap-2 mb-8">
           <button
             onClick={() => setFilter(null)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              filter === null
-                ? "bg-foreground text-background"
-                : "bg-card border border-border text-muted-foreground hover:text-foreground"
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
+              filter === null ? "bg-gray-900 text-white" : "bg-white border border-gray-200 text-gray-500 hover:text-gray-800"
             }`}
           >
             All ({REACTIONS.length})
@@ -208,10 +159,8 @@ export function ReactionScope() {
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  filter === key
-                    ? "text-white shadow-md"
-                    : "bg-card border border-border text-muted-foreground hover:text-foreground"
+                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
+                  filter === key ? "text-white shadow-md" : "bg-white border border-gray-200 text-gray-500 hover:text-gray-800"
                 }`}
                 style={filter === key ? { backgroundColor: info.color } : undefined}
               >
@@ -221,11 +170,8 @@ export function ReactionScope() {
           })}
         </div>
 
-        {/* Reaction cards */}
-        <div className="space-y-6">
-          {filtered.map((rxn) => (
-            <ReactionCard key={rxn.id} reaction={rxn} />
-          ))}
+        <div className="space-y-8">
+          {filtered.map((rxn) => <ReactionCard key={rxn.id} reaction={rxn} />)}
         </div>
       </div>
     </section>
