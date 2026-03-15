@@ -277,9 +277,7 @@ export const MOLECULE_NAMES: Record<string, MoleculeEntry> = {
 
   // ─── Pharmaceuticals ──────────────────────────────────────
   "CC(=O)Nc1ccc(O)cc1": { name: "Acetaminophen", category: "pharmaceutical" },
-  "CC(=O)Oc1ccccc1C(=O)O": { name: "Aspirin", category: "pharmaceutical" },
   "CC(C)Cc1ccc(C(C)C(=O)O)cc1": { name: "Ibuprofen", category: "pharmaceutical" },
-  "OC(=O)c1ccccc1O": { name: "Salicylic acid", category: "pharmaceutical" },
   "Cn1c(=O)c2c(ncn2C)n(C)c1=O": { name: "Caffeine", category: "pharmaceutical" },
   "Cn1cnc2c1c(=O)[nH]c(=O)n2C": { name: "Theophylline", category: "pharmaceutical" },
   "Cn1cnc2c1c(=O)n(C)c(=O)n2C": { name: "Theobromine", category: "pharmaceutical" },
@@ -288,14 +286,8 @@ export const MOLECULE_NAMES: Record<string, MoleculeEntry> = {
   "CC(=O)OC1CC2CCC3C(CCC4(C)C3CC(=O)C4)C2(C)CC1": { name: "Testosterone acetate", category: "pharmaceutical" },
   "CC12CCC(=O)C=C1CCC1C2CCC2(C)C1CCC2(O)C(=O)CO": { name: "Cortisone", category: "pharmaceutical" },
 
-  // ─── Common Solvents ──────────────────────────────────────
-  "ClCCl": { name: "Dichloromethane", category: "solvent" },
-  "ClC(Cl)(Cl)Cl": { name: "Carbon tetrachloride", category: "solvent" },
+  // ─── Common Solvents (unique entries only) ──────────────────
   "CCOC(=O)C": { name: "Ethyl acetate", category: "solvent" },
-  "CC(=O)C": { name: "Acetone", category: "solvent" },
-  "C1CCOC1": { name: "THF", category: "solvent" },
-  "CN(C)C=O": { name: "DMF", category: "solvent" },
-  "CS(C)=O": { name: "DMSO", category: "solvent" },
 
   // ─── Vitamins & Natural Products ──────────────────────────
   "CC1=CC(=O)c2ccccc2C1=O": { name: "Menadione (Vitamin K3)", category: "natural-product" },

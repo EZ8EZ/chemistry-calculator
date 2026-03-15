@@ -414,7 +414,7 @@ const NUCLEOBASES: MoleculeTemplate[] = [
 // Focus: cobalt porphyrin catalysis, metalloradical catalysis,
 // carbene/nitrene transfer, radical C-H functionalization
 
-const ZHANG_LAB_COLLECTION: MoleculeTemplate[] = [
+export const ZHANG_LAB_COLLECTION: MoleculeTemplate[] = [
   {
     id: "porphine", name: "Porphine (Free Base)", smiles: "c1cc2cc3ccc(cc4ccc(cc5ccc(cc1[nH]2)[nH]5)n4)[nH]3",
     description: "The unsubstituted porphyrin macrocycle. Four pyrrole units connected by methine bridges.",
@@ -765,3 +765,6 @@ export function searchTemplates(query: string): MoleculeTemplate[] {
 export function getBeginnerTemplates(): MoleculeTemplate[] {
   return getAllTemplates().filter((t) => t.difficulty === "beginner");
 }
+
+/** Alias for Zhang Lab collection used by research visualization */
+export const ZHANG_LAB_TEMPLATES = ZHANG_LAB_COLLECTION;

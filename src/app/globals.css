@@ -27,24 +27,24 @@
   }
 
   .dark {
-    --background: 224 20% 8%;
+    --background: 228 20% 6%;
     --foreground: 210 20% 92%;
-    --card: 224 18% 11%;
+    --card: 228 18% 9%;
     --card-foreground: 210 20% 92%;
-    --popover: 224 18% 11%;
+    --popover: 228 18% 9%;
     --popover-foreground: 210 20% 92%;
     --primary: 217 91% 60%;
     --primary-foreground: 222 47% 4%;
-    --secondary: 217 19% 17%;
+    --secondary: 217 19% 15%;
     --secondary-foreground: 210 20% 92%;
-    --muted: 217 19% 17%;
+    --muted: 217 19% 15%;
     --muted-foreground: 215 16% 57%;
-    --accent: 217 19% 17%;
+    --accent: 217 19% 15%;
     --accent-foreground: 210 20% 92%;
     --destructive: 0 63% 50%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 15% 20%;
-    --input: 217 15% 20%;
+    --border: 217 15% 16%;
+    --input: 217 15% 16%;
     --ring: 217 91% 60%;
   }
 }
@@ -82,27 +82,9 @@
   background: hsl(var(--muted-foreground) / 0.5);
 }
 
-/* Element button styles */
-.element-btn {
-  @apply relative flex flex-col items-center justify-center rounded-md border border-border
-    px-2 py-1.5 text-xs font-medium transition-all duration-150
-    hover:border-primary/50 hover:bg-accent
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-    active:scale-95;
-}
-
-.element-btn.active {
-  @apply border-primary bg-primary/10 text-primary;
-}
-
-/* Panel transitions */
-.panel-enter {
-  animation: panel-slide 0.2s ease-out;
-}
-
-/* Atom highlight */
-.atom-highlight {
-  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.5));
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Chemistry notation */
@@ -118,4 +100,9 @@
 .chem-formula sup {
   font-size: 0.7em;
   vertical-align: super;
+}
+
+/* Selection highlight color */
+::selection {
+  background-color: hsl(var(--primary) / 0.3);
 }
