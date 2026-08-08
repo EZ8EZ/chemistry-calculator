@@ -1,0 +1,76 @@
+# Taxonomy for James Zhang (PhD student, Chemistry, Johns Hopkins University;
+# Huang lab). Research focus: biocatalysis / enzyme engineering — non-heme
+# iron and nickel enzyme engineering, directed evolution, ligand-to-metal
+# charge transfer (LMCT) photocatalysis, nickel-catalyzed C(sp2)-S coupling,
+# radical biocatalysis.
+#
+# scoring_bias: breadth — as a PhD student, some methods/technique papers
+# outside his exact system are still valuable for building literature
+# awareness and picking up transferable techniques. Allow a bit more into
+# Band B/C than for a senior-PI profile. See prompts/relevance_scoring.md.
+
+profile_summary: >
+  James Zhang works in Xiongyi Huang's lab on engineering non-heme
+  iron/nickel metalloenzymes for new-to-nature reactivity — e.g. repurposing
+  the non-heme iron enzyme PsEFE with a nickel-substituted active site to do
+  photoinduced ligand-to-metal charge transfer (LMCT) chemistry, enabling
+  nickel-catalyzed C(sp2)-S cross-coupling via directed evolution. Broader
+  interests: directed evolution methodology, photoenzymatic catalysis, and
+  radical biocatalysis generally.
+
+tier_1_must_not_miss:
+  - non-heme iron enzyme engineering (e.g. Fe(II)/alpha-KG-dependent enzymes)
+  - non-heme nickel enzyme / nickel-substituted metalloenzyme active sites
+  - "directed evolution of biocatalysts (methodology - high-throughput
+    screening/selection, ancestral sequence reconstruction, ML-guided evolution)"
+  - ligand-to-metal charge transfer (LMCT) photocatalysis (organic or
+    organometallic, e.g. cerium- or iron-LMCT radical generation)
+  - nickel-catalyzed C(sp2)-S coupling / thioetherification
+  - photoenzymatic catalysis (light-driven enzyme reactions, photoexcited
+    cofactors)
+  - radical biocatalysis broadly (radical SAM enzymes, flavin-dependent
+    radical enzymes, engineered metalloenzyme radical intermediates)
+  - metalloenzyme active-site engineering for abiotic/new-to-nature reactivity
+
+tier_2_broader_awareness:
+  - heme-enzyme engineering (P450s, etc.) as comparative/methodological reference
+  - new directed-evolution platforms/tools generally (yeast display,
+    phage-assisted evolution, microfluidic high-throughput screening)
+  - photoredox catalysis methodology broadly, not limited to LMCT
+  - nickel-catalyzed cross-coupling broadly (C-N, C-O, C-C), beyond just C-S
+  - biocatalytic C-H functionalization / new-to-nature enzyme reactions generally
+  - computational enzyme design (e.g. Rosetta- or AlphaFold-guided active-site
+    design, ML-guided protein engineering)
+  - radical-clock / mechanistic-probe studies applied to enzymatic systems
+
+# First-pass, literature-informed draft of labs/PIs working in overlapping or
+# adjacent space (directed evolution, engineered metalloenzyme catalysis,
+# photoenzymatic/LMCT chemistry). This list was assembled from public
+# literature, NOT confirmed by James Zhang himself — treat it as a starting
+# point to review and correct with him directly before relying on it for
+# "scoop risk" flags. Add/remove names as he confirms.
+watch_labs:
+  - name: "Frances Arnold"
+    institution: "Caltech"
+    why: "Founder of directed evolution for new-to-nature enzyme catalysis; the field's central reference point."
+  - name: "Todd Hyster"
+    institution: "Cornell University"
+    why: "Photoenzymatic catalysis and radical enzymology — closely overlapping methodology."
+  - name: "Rudi Fasan"
+    institution: "University of Rochester"
+    why: "Engineered heme enzymes for carbene/nitrene transfer biocatalysis — adjacent engineered-metalloenzyme approach."
+  - name: "Yang Yang"
+    institution: "UC Santa Barbara"
+    why: "Engineered heme proteins for radical and carbene-transfer catalysis."
+  - name: "Huimin Zhao"
+    institution: "University of Illinois Urbana-Champaign"
+    why: "Directed evolution and synthetic biology platforms for biocatalyst engineering."
+  - name: "Frank Hollmann"
+    institution: "TU Delft"
+    why: "Biocatalysis and photobiocatalysis — direct overlap with photoenzymatic reaction development."
+  - name: "Corinna Schindler"
+    institution: "University of Michigan"
+    why: "Pioneer of small-molecule cerium-LMCT photocatalysis — key comparative reference for LMCT mechanism/scope."
+  - name: "J. Martin Bollinger & Carsten Krebs"
+    institution: "Penn State University"
+    why: "Mechanistic non-heme iron enzymology — foundational mechanistic reference for non-heme Fe-dependent biocatalyst engineering."

@@ -1,0 +1,80 @@
+# Taxonomy for Peter Zhang (Professor of Chemistry, Boston College)
+# Research focus: metalloradical catalysis (MRC) — Co(II)-porphyrin catalysts,
+# one-electron/radical mechanisms, stereoselective carbene/nitrene transfer,
+# C-H amination, cyclopropanation, asymmetric organometallic catalysis.
+#
+# scoring_bias: precision — a senior PI's trust in "must-read" flags depends on
+# them being genuinely exceptional. When in doubt, score down (Band B/C) rather
+# than up. See prompts/relevance_scoring.md for how these tiers are used.
+
+profile_summary: >
+  X. Peter Zhang's lab pioneered metalloradical catalysis (MRC): using
+  Co(II)-porphyrin complexes as stable metalloradicals to activate diazo
+  compounds and azides, generating metal-carbene and metal-nitrene radical
+  intermediates for stereoselective, one-electron (radical) catalytic
+  transformations — carbene transfer, nitrene transfer, C-H amination,
+  cyclopropanation, and radical C-C bond formation, largely with first-row
+  (non-precious) metals.
+
+tier_1_must_not_miss:
+  - cobalt(II) porphyrin catalysis
+  - metalloradical catalysis (MRC)
+  - metal-carbene radical / cobalt-carbene radical
+  - metal-nitrene radical / nitrene radical intermediates
+  - carbene transfer (radical / stepwise mechanism)
+  - nitrene transfer (radical / stepwise mechanism)
+  - C-H amination (intramolecular or intermolecular, radical mechanism)
+  - asymmetric cyclopropanation via diazo/carbene chemistry
+  - radical clock experiments / radical rebound mechanism studies
+  - diazo compound activation / new diazo reagents
+  - first-row metal (Co, Fe, Mn) asymmetric catalysis with chiral porphyrin or
+    related ligand scaffolds (e.g. D2-symmetric amidoporphyrins)
+  - EPR / spectroscopic characterization of paramagnetic Co(II)/Co(III)-radical
+    intermediates
+  - one-electron (open-shell) organometallic catalytic mechanisms
+
+tier_2_broader_awareness:
+  - iron- or manganese-porphyrin catalysis (non-cobalt, same ligand platform)
+  - first-row transition metal (Ni, Cu, Fe) catalysis for radical C-X bond formation
+  - photoredox- or electrochemically-generated metal-carbenes/nitrenes
+  - new chiral ligand designs for first-row-metal asymmetric catalysis
+  - asymmetric C-H functionalization broadly (Pd/Rh/Ru-catalyzed) — only if a
+    major breakthrough or mechanistically novel
+  - bioinorganic radical enzymology mechanistically analogous to MRC (e.g.
+    heme-based radical rebound, cytochrome P450 C-H activation)
+  - computational/DFT studies of spin-state or radical-rebound mechanisms in
+    organometallic catalysis
+  - carbene/nitrene transfer chemistry using precious metals (Rh, Ru, Ir) as a
+    comparative/competitive reference point
+
+# First-pass, literature-informed draft of labs/PIs working in overlapping or
+# adjacent space (carbene/nitrene transfer catalysis, radical mechanisms in
+# organometallic catalysis, first-row-metal asymmetric catalysis). This list
+# was assembled from public literature, NOT confirmed by Peter Zhang himself —
+# treat it as a starting point to review and correct with him directly before
+# relying on it for "scoop risk" flags. Add/remove names as he confirms.
+watch_labs:
+  - name: "Huw Davies"
+    institution: "Emory University"
+    why: "Major figure in metal-carbene chemistry and Rh-catalyzed C-H functionalization; closely adjacent carbene-transfer methodology."
+  - name: "Tom Rovis"
+    institution: "Columbia University"
+    why: "Rh-catalyzed carbene/nitrene transfer, C-H amination — adjacent mechanistic territory."
+  - name: "John Hartwig"
+    institution: "UC Berkeley"
+    why: "C-H amination via metal-nitrene insertion (Rh/Ir); a natural comparative reference for MRC-based C-H amination."
+  - name: "Paul Chirik"
+    institution: "Princeton University"
+    why: "First-row metal (Fe, Co) catalysis with open-shell/radical mechanisms — closely overlapping mechanistic philosophy."
+  - name: "Guosheng Liu"
+    institution: "Shanghai Institute of Organic Chemistry (SIOC)"
+    why: "Radical and cobalt-catalyzed asymmetric reactions."
+  - name: "Xin-Yuan Liu"
+    institution: "Southern University of Science and Technology (SUSTech)"
+    why: "Co/Ni-catalyzed radical reactions, including asymmetric radical relay catalysis."
+  - name: "Zhan Lu"
+    institution: "Zhejiang University"
+    why: "Cobalt-catalyzed radical reactions and asymmetric hydrogenation/coupling."
+  - name: "Justin Du Bois"
+    institution: "Stanford University"
+    why: "Pioneer of Rh-catalyzed nitrene C-H amination chemistry — key comparative/competing methodology."
